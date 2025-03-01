@@ -1,124 +1,373 @@
----
-layout: base
----
+<!DOCTYPE html>
+<html>
+<head>
+<title>思维链.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
-<!--&lt;!&ndash;valine comment function&ndash;&gt;-->
-<!--<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
-<!--<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>-->
-<!--<script src="//unpkg.com/valine/dist/Valine.min.js"></script>-->
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
 
-{% for post in paginator.posts %}
-<div class="post">
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
 
-    <h2 class="post-title">
-        <a href="{{ post.url | prepend: site.baseurl }}">
-            {% if post.title %}
-            {{ post.title }}
-            {% else %}
-            {{ site.page_no_title }}
-            {% endif %}
-        </a>
-    </h2>
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
 
-    <div class="post-meta">
-        <span>
-        <i class="icon-post-date"> {{ post.date | date: "%Y年%m月%d日" }}
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
 
-        </i>
-            <!-- 显示每篇博客阅读量, id 将作为查询条件 -->
-                <span id={{post.url}} class="leancloud-visitors" data-flag-title={{post.title}}>
-                    <span class="post-meta-divider">|</span>
-                    <span class="post-meta-item-text">阅读量 </span>
-                    <span class="leancloud-visitors-count"></span>
-                </span>
-                &#x1F601
-        </span>
+body.showEditorSelection .code-line {
+	position: relative;
+}
 
-    </div>
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
 
-    <div class="post-content">{{ post.content | strip_html | truncate:160 }}</div>
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
 
-    <p class="readmore"><a href="{{ post.url | prepend: site.baseurl }}">阅读更多</a></p>
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
 
-</div>
-{% endfor %}
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
 
-<!--&lt;!&ndash;初始化Valine&ndash;&gt;-->
-<!--<script>-->
-<!--    var notify = '{{site.valine.notify}}' === true;-->
-<!--    var verify = '{{site.valine.verify}}.>' === true;-->
-<!--    var visitor = '{{site.valine.visitor}}.>' === true;-->
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
 
-<!--    new Valine({-->
-<!--        av: AV,-->
-<!--        el: '#valine_comment',-->
-<!--        notify: notify,-->
-<!--        verify: verify,-->
-<!--        // smiles_url: '/smiles',-->
-<!--        visitor: true,-->
-<!--        app_id: '{{site.valine.app_id}}',-->
-<!--        app_key: '{{site.valine.app_key}}',-->
-<!--        placeholder: '{{site.valine.placeholder}}',-->
-<!--        avatar: '{{site.valine.avatar}}',-->
-<!--    });-->
-<!--</script>-->
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
 
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
 
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
 
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
 
-<div class="page-navigator">
-    {% if paginator.previous_page %}
-    {% if paginator.page == 2 %}
-    <a href="/" class="previous">上一页</a>
-    {% else %}
-    <a href="/page/{{ paginator.previous_page }}/" class="previous">上一页</a>
-    {% endif %}
-    {% endif %}
-    <span class="page-number">第 {{ paginator.page }}/{{ paginator.total_pages }} 页</span>
-    {% if paginator.next_page %}
-    <a href="/page/{{ paginator.next_page }}/" class="next">下一页</a>
-    {% endif %}
-</div>
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
 
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
 
-<!--giscus评论插件-->
-<!--https://github.com/settings/installations/47603379-->
-<div class="container">
-  <div class="row">
-    <div class="col col-12">
-      <script src="https://giscus.app/client.js"
-        data-repo="oukohou/image_gallery"
-        data-repo-id="MDEwOlJlcG9zaXRvcnkxODg5ODYzOTY="
-        data-category="General"
-        data-category-id="DIC_kwDOC0O0HM4CdbSz"
-        data-mapping="pathname"
-        data-strict="1"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="light_protanopia"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-        </script>
-    </div>
-  </div>
-</div>
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
 
-<!--&lt;!&ndash;use clustrMaps&ndash;&gt;-->
-<!--<script type="text/javascript" id="clstr_globe"-->
-<!--        src="//cdn.clustrmaps.com/globe.js?d=AjthYW1xsC160mPRvz36bECA0Oi2v43aj1tyCOkL_Cc"-->
-<!--&gt;-->
-<!--        // crossorigin="anonymous"-->
-<!--</script>-->
-<!--<script type='text/javascript' id='clustrmaps'-->
-        <!--src='//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=3000&t=n&d=AjthYW1xsC160mPRvz36bECA0Oi2v43aj1tyCOkL_Cc'>-->
+a {
+	text-decoration: none;
+}
 
-<!--</script>-->
-<!--<a href='https://clustrmaps.com/site/1b6rd'  title='Visit tracker'>-->
-    <!--<img src='//clustrmaps.com/map_v2.png?cl=ffffff&w=3000&t=n&d=AjthYW1xsC160mPRvz36bECA0Oi2v43aj1tyCOkL_Cc' width="100%"/>-->
-<!--</a>-->
-<!--<a href="https://clustrmaps.com/site/1b6rd" title="Visit tracker">-->
-<!--<img src="//www.clustrmaps.com/map_v2.png?d=AjthYW1xsC160mPRvz36bECA0Oi2v43aj1tyCOkL_Cc&cl=ffffff" width="100%"/>-->
-<!--</a>-->
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<details class="lake-collapse"><summary id="u75004cd1"><span class="ne-text">Can small language models be good reasoners for sequential recommendation</span></summary><ul class="ne-ul"><li id="u43f67cee" data-lake-index-type="0"><span class="ne-text">主要内容：</span></li></ul><p id="u71b2f92d" class="ne-p"><img src="https://cdn.nlark.com/yuque/0/2025/png/40411657/1740648627538-adb6826a-e2cc-4a27-9ed7-0720a3344590.png" width="630.4" id="uafc861e1" class="ne-image"></p></details>
+<details class="lake-collapse"><summary id="u731781ce"><span class="ne-text">Cot</span></summary><ul class="ne-ul"><li id="ucd036a2b" data-lake-index-type="0"><span class="ne-text">can small language models be good reasoners for sequential recommendation</span></li></ul><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="u9443b047" data-lake-index-type="0"><span class="ne-text">no code</span></li></ul></ul><ul class="ne-ul"><li id="ub7273e92" data-lake-index-type="0"><span class="ne-text">mutual reasoning makes smaller llms stronger problem-solvers</span></li></ul><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="u933d839b" data-lake-index-type="0"><span class="ne-text">code：</span><a href="https://github.com/zhentingqi/rStar" data-href="https://github.com/zhentingqi/rStar" target="_blank" class="ne-link"><span class="ne-text">https://github.com/zhentingqi/rStar</span></a></li><li id="ud78f47c0" data-lake-index-type="0"><span class="ne-text">参考：Accessing GPT-4 level Mathematical Olympiad Solutions via Monte Carlo Tree Self-refine with LLaMa-3 8B: A Technical Report</span></li></ul></ul><ul class="ne-ul"><li id="ue847508b" data-lake-index-type="0"><span class="ne-text">calibrating reasoning in language models with internal consistency</span></li></ul><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="ucc895750" data-lake-index-type="0"><span class="ne-text">code：</span><a href="https://github.com/zhxieml/internal-consistency.git" data-href="https://github.com/zhxieml/internal-consistency.git" target="_blank" class="ne-link"><span class="ne-text">https://github.com/zhxieml/internal-consistency</span></a></li></ul></ul><ul class="ne-ul"><li id="u1bd50764" data-lake-index-type="0"><span class="ne-text">reward-guided speculative decoding for efficient llm reasoning</span></li></ul><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="u3a78e167" data-lake-index-type="0"><a href="https://github.com/BaohaoLiao/RSD" data-href="https://github.com/BaohaoLiao/RSD" target="_blank" class="ne-link"><span class="ne-text">https://github.com/BaohaoLiao/RSD</span></a></li></ul></ul><p id="uf9572762" class="ne-p"><br></p></details>
+<details class="lake-collapse"><summary id="ucadb50f9"><span class="ne-text">笔记</span></summary><p id="u0daebcca" class="ne-p"><span class="ne-text" style="background-color: #FBDE28">启发式算法</span><span class="ne-text">：根据经验或规则，在可接受的成本（计算时间、空间消耗）下得到一个可行解；</span><strong><span class="ne-text">不保证全局最优解。</span></strong></p><p id="u9335895b" class="ne-p"><span class="ne-text"></span></p><h4 id="IEUg2" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64)">多臂赌博机问题</span></h4><p id="u3b00f475" class="ne-p"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">假设有多个赌博机（每个赌博机的奖励分布不同），目标是通过多次尝试，找到奖励最大的赌博机。每次尝试一个赌博机，都会获得一定的奖励，但无法预先知道每个赌博机的奖励分布。</span></p><p id="u341e4b51" class="ne-p" style="text-indent: 2em"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">利用（Exploitation）：选择当前已知奖励最高的赌博机。</span></p><p id="ufaef3a69" class="ne-p" style="text-indent: 2em"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">探索（Exploration）：尝试其他赌博机，以发现可能更好的选择。</span></p><ol class="ne-ol"><li id="ub2941296" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">UCB算法通过权重c权衡利用和探索。</span><em><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">N</span></em><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">是总探索次数，</span><em><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">n</span></em><em><sub><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">i</span></sub></em><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">是第</span><em><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">i</span></em><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">个赌博机的探索次数</span></li></ol><p id="ueb3bbed1" class="ne-p" style="text-align: center"><img src="https://cdn.nlark.com/yuque/0/2025/png/40411657/1740736381365-1e93ab81-3361-4053-9d5e-dcb75b75869f.png" width="244" id="u9861ba3f" class="ne-image"></p><p id="uebcc346e" class="ne-p"><img src="https://cdn.nlark.com/yuque/0/2025/png/40411657/1740736462133-f3ac20c0-e67e-4399-a3ba-248bf33799c4.png" width="526" id="u01d56e20" class="ne-image"><span class="ne-text"> </span></p><ol start="2" class="ne-ol"><li id="u20dc70d0" data-lake-index-type="0"><span class="ne-text">工作过程：</span></li></ol><ol class="ne-list-wrap"><ol ne-level="1" class="ne-ol"><li id="u4d1efbcd" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">初始化：尝试每个赌博机一次。</span></li><li id="ub3cdcb43" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">对于每次尝试：</span></li></ol></ol><ul class="ne-list-wrap"><ul class="ne-list-wrap"><ul ne-level="2" class="ne-ul"><li id="u3a355dc5" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">计算每个赌博机的UCB值。</span></li><li id="u479ff208" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">选择UCB值最大的赌博机进行尝试。</span></li><li id="uf0b0eea1" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">更新该赌博机的平均奖励和尝试次数。</span></li></ul></ul></ul><ol class="ne-list-wrap"><ol start="3" ne-level="1" class="ne-ol"><li id="u0c2ede76" data-lake-index-type="0"><span class="ne-text" style="color: rgb(64, 64, 64); font-size: 16px">重复步骤b，直到达到尝试次数上限。</span></li></ol></ol><h4 id="FBHef"><span class="ne-text">蒙特卡洛树搜索（MCTS）</span></h4><p id="u978c2fc8" class="ne-p"><strong><span class="ne-text"></span></strong></p><p id="ud22e77d6" class="ne-p"><span class="ne-text" style="background-color: #FBDE28">CoT的三种类型</span><span class="ne-text">：</span></p><p id="u4cfa4136" class="ne-p"><span class="ne-text">人工构造推理过程、Zero-Shot（&quot;Let's think step by step&quot;）、给足够多的带有推理过程的样例，生成问题P1的答案时候，先找到P1最接近的例子，模仿输出。</span></p><ol class="ne-ol"><li id="u129794fd" data-lake-index-type="0"><span class="ne-text">4o输出：</span></li></ol><p id="uf90162fb" class="ne-p"><img src="https://cdn.nlark.com/yuque/0/2025/png/40411657/1740656343900-8aaef05e-213b-4d49-a198-5921d196af2d.png" width="841.6" id="u43dd3a5a" class="ne-image"></p><p id="uf55fe392" class="ne-p"><img src="https://cdn.nlark.com/yuque/0/2025/png/40411657/1740656236774-e40db2b7-689a-45f9-afe2-0b1be947817c.png" width="830.4" id="J7BjI" class="ne-image"></p></details>
+
+</body>
+</html>
